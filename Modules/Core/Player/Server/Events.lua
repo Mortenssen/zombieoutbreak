@@ -1,16 +1,20 @@
 local function OnPlayerConnecting(name, setKickReason, deferrals)
     local _Player = Player(source)
     local Identifier = _Player.Identifier()
+    
+    deferrals.defer()
+    Wait(0)
 
     if not Identifier then
-        setKickReason("You are not connected to Steam.")
+        deferrals.done("You dont have a " .. GlobalConfig.Identifier .." identifier.")
     else
         if (_Player.Exists()) then
             print(name .. " - User Authenticated [" .. Identifier .. "]")
         else
             print(name .. "[" .. Identifier .. "] - Joined for first time to server!")
-            Database.ExecuteInsertQuery("INSERT INTO users (Identifier, Nickname) VALUES ('" .. Identifier .. "', '" .. name .. "')")
+            Database.ExecuteInsertQuery("INSERT INTO users (Identifier, Nickname, Level, `Group`) VALUES ('" .. Identifier .. "', '" .. name .. "', '1', 'User')")
         end
+        deferrals.done()
     end
 end
 AddEventHandler("playerConnecting", OnPlayerConnecting)
@@ -42,7 +46,6 @@ AddEventHandler("Player:Spawned", function()
     else
         TriggerClientEvent("Identity:Register", _Player.Source)
     end
-
     TriggerClientEvent("Inventory:UpdateDrop", -1, Inventory.Drop, Inventory.DropId)
     TriggerClientEvent("Inventory:CreateDrop", _Player.Source, Inventory.Drop)
 end)
@@ -65,11 +68,19 @@ AddEventHandler("Player:Reset", function()
     local PlayerSkin = _Player.GetSkin()
     local InventoryVoid = {}
 
-    PlayerSkin["Hat"] = nil
-    PlayerSkin["Tshirt"] = nil
-    PlayerSkin["Gloves"] = nil
-    PlayerSkin["Pants"] = nil
-    PlayerSkin["Shoes"] = nil
+    PlayerSkin.Hat = nil
+    PlayerSkin.Glasses = nil
+    PlayerSkin.Earrings = nil
+    PlayerSkin.Watch = nil
+    PlayerSkin.Bracelet = nil
+    PlayerSkin.Mask = nil
+    PlayerSkin.Accessory = nil
+    PlayerSkin.Tshirt = nil
+    PlayerSkin.Gloves = nil
+    PlayerSkin.Armor = nil
+    PlayerSkin.Bag = nil
+    PlayerSkin.Pants = nil
+    PlayerSkin.Shoes = nil
 
     Database.ExecuteUpdateQuery("UPDATE users SET Inventory = @Inventory, Skin = @Skin WHERE Identifier = @Identifier", {
         ["@Identifier"] = Identifier,

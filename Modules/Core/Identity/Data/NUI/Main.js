@@ -131,7 +131,10 @@ Identity.SetSelectList = function(Classes) {
 	SelectClasses.innerHTML = Div;
 }
 
+let PreventList = true;
+
 $(document).ready(function(){
+
 
 	window.addEventListener('message', function(event) {
 		var Data = event.data;
